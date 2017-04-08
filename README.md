@@ -1,1 +1,1 @@
-# 21co-btc-rewards
+# 21co-rewards-server
