@@ -9,6 +9,7 @@ wallet = Wallet()
 payment = Payment(app, wallet)
 
 # Use this to add 5000 to your Team Satoshi balance
+# TODO: Make it work :)
 @payment.required(5000)
 @app.route('/addFunds')
 def addFunds():
