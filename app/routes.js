@@ -16,7 +16,7 @@ UserService.init(db);
 /**
  * @swagger
  * /:
- *   post:
+ *   get:
  *     description: Tests if the API is running or not
  *     tags:
  *       - Test
