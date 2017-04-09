@@ -13,12 +13,89 @@ TeamService.init(db);
 const UserService = require("./services/UserService");
 UserService.init(db);
 
-// test route
+/**
+ * @swagger
+ * /:
+ *   post:
+ *     description: Tests if the API is running or not
+ *     tags:
+ *       - Test
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: status
+ */
 router.get("/", function(req, res) {
-    res.json({message: "BTC Bounty server is alive!"});
+    res.status(200).json({message: "BTC Bounty server is alive!"});
 });
 
 // Team API routes
+/**
+ *  @swagger
+ *  definitions:
+ *    Team:
+ *      type: object
+ *      properties:
+ *        rowid:
+ *          type: integer
+ *          description: Team ID
+ *        name:
+ *          type: string
+ *          description: Team Name
+ *        satoshiBalance:
+ *          type: integer
+ *          description: Satoshi balance
+ *    TeamLite:
+ *      type: object
+ *      properties:
+ *        name:
+ *          type: string
+ *          description: Team Name
+ *    Balance:
+ *      type: object
+ *      properties:
+ *        amount:
+ *          type: integer
+ *          description: Amount to add/subtract
+ */
+
+/**
+ * @swagger
+ * /teams:
+ *   post:
+ *     description: Creates a team
+ *     operationId: createTeam
+ *     tags:
+ *       - Teams
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: Team that will be crated
+ *         schema:
+ *           $ref: '#/definitions/TeamLite'
+ *     responses:
+ *       201:
+ *         description: Created Team
+ *         schema:
+ *           $ref: '#/definitions/Team'
+ *   get:
+ *     description: Returns all teams
+ *     operationId: getTeams
+ *     tags:
+ *       - Teams
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: Arrays of Teams
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Team'
+ */
 router.route("/teams").post(function(req, res) {
     TeamService.createTeam({
         name: req.body.name
@@ -39,6 +116,60 @@ router.route("/teams").post(function(req, res) {
     });
 });
 
+/**
+ * @swagger
+ * /teams/{teamId}:
+ *   get:
+ *     description: Returns a Team
+ *     operationId: getTeam
+ *     tags:
+ *       - Teams
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Team with the ID provided
+ *         schema:
+ *           $ref: '#/definitions/Team'
+ *       404:
+ *         description: Returned if the Team does not exist
+ *   put:
+ *     description: Updates a Team
+ *     operationId: updateTeam
+ *     tags:
+ *       - Teams
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: body
+ *         name: body
+ *         description: Team with updated values
+ *         schema:
+ *           $ref: '#/definitions/TeamLite'
+ *     responses:
+ *       204:
+ *         description: no content
+ *   delete:
+ *     description: Deletes a Team
+ *     operationId: deleteTeam
+ *     tags:
+ *       - Teams
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *     responses:
+ *       204:
+ *         description: no content
+ */
 router.route("/teams/:teamId").get(function(req, res) {
     TeamService.getTeam(req.params.teamId, function(result) {
         if (result) {
@@ -65,7 +196,28 @@ router.route("/teams/:teamId").get(function(req, res) {
     });
 });
 
-// Used by the python server to modify balance when funds are added
+/**
+ * @swagger
+ * /teams/{teamId}/balance:
+ *   put:
+ *     description: Changes Team balance, used for paying and adding of funds to a team
+ *     operationId: updateTeam
+ *     tags:
+ *       - Teams
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: body
+ *         name: body
+ *         description: Satoshi amount to add/subtract
+ *         schema:
+ *           $ref: '#/definitions/Balance'
+ *     responses:
+ *       204:
+ *         description: no content
+ */
 router.route("/teams/:teamId/balance").put(function(req, res) {
     TeamService.changeBalance(req.params.teamId, req.body.amount, function(result) {
         if (!result) {
@@ -77,6 +229,86 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
 });
 
 // User API routes
+/**
+ *  @swagger
+ *  definitions:
+ *    User:
+ *      type: object
+ *      properties:
+ *        rowid:
+ *          type: integer
+ *          description: User ID
+ *        name:
+ *          type: string
+ *          description: User Name
+ *        btcAddress:
+ *          type: string
+ *          description: User BTC Address
+ *        teamId:
+ *          type: integer
+ *          description: Team ID
+ *    UserLite:
+ *      type: object
+ *      properties:
+ *        name:
+ *          type: string
+ *          description: User Name
+ *        btcAddress:
+ *          type: string
+ *          description: User BTC Address
+ *    PaymentDetails:
+ *      type: object
+ *      properties:
+ *        amount:
+ *          type: integer
+ *          description: Amount to add/subtract
+ */
+
+/**
+ * @swagger
+ * /teams/{teamId}/users:
+ *   post:
+ *     description: Creates a User in a Team
+ *     operationId: createUser
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: body
+ *         name: body
+ *         description: User that will be crated
+ *         schema:
+ *           $ref: '#/definitions/UserLite'
+ *     responses:
+ *       201:
+ *         description: Created User
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *   get:
+ *     description: Returns all Users in a Team
+ *     operationId: getUsers
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Arrays of Users
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/User'
+ */
 router.route("/teams/:teamId/users").post(function(req, res) {
     UserService.createUser(req.params.teamId, {
         name: req.body.name,
@@ -98,6 +330,68 @@ router.route("/teams/:teamId/users").post(function(req, res) {
     });
 });
 
+/**
+ * @swagger
+ * /teams/{teamId}/users/{userId}:
+ *   get:
+ *     description: Returns a User
+ *     operationId: getUser
+ *     tags:
+ *       - Users
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: path
+ *         name: userId
+ *         description: User ID
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: User with the ID provided
+ *         schema:
+ *           $ref: '#/definitions/User'
+ *       404:
+ *         description: Returned if the User does not exist
+ *   put:
+ *     description: Updates a User
+ *     operationId: updateUser
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: path
+ *         name: userId
+ *         description: User ID
+ *         type: integer
+ *       - in: body
+ *         name: body
+ *         description: User with updated values
+ *         schema:
+ *           $ref: '#/definitions/UserLite'
+ *     responses:
+ *       204:
+ *         description: no content
+ *   delete:
+ *     description: Deletes a User
+ *     operationId: deleteUser
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: User ID
+ *         type: integer
+ *     responses:
+ *       204:
+ *         description: no content
+ */
 router.route("/teams/:teamId/users/:userId").get(function(req, res) {
     UserService.getUser(req.params.teamId, req.params.userId, function(result) {
         if (result) {
@@ -124,6 +418,36 @@ router.route("/teams/:teamId/users/:userId").get(function(req, res) {
     });
 });
 
+/**
+ * @swagger
+ * /teams/{teamId}/users/{userId}/pay:
+ *   post:
+ *     description: Pays the specified amount of satoshi to the Users address
+ *     operationId: payUser
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: path
+ *         name: userId
+ *         description: User ID
+ *         type: integer
+ *       - in: body
+ *         name: body
+ *         description: Satoshi amount to pay to the user
+ *         schema:
+ *           $ref: '#/definitions/PaymentDetails'
+ *     responses:
+ *       204:
+ *         description: no content
+ *       400:
+ *         description: error when getting team data
+ *       500:
+ *         description: error performing the payment
+ */
 router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
     var amount = req.body.amount;
     var teamId = req.params.teamId;
@@ -144,7 +468,7 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
                                 console.log('error:', error); // Print the error if one occurred
                                 console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
                                 if (response && response.statusCode == 200) {
-                                    res.status(200).end();
+                                    res.status(204).end();
                                 } else {
                                     // rollback the balance change
                                     TeamService.changeBalance(teamId, amount, function(result) {

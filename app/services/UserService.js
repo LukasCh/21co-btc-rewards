@@ -40,12 +40,11 @@ var UserService = {
     },
 
     updateUser: function($teamId, $userId, $user, $callback) {
-        db.run("UPDATE users SET name = ?, btcAddress = ?, teamId = ? WHERE rowid = ? AND teamId = ?", {
+        db.run("UPDATE users SET name = ?, btcAddress = ? WHERE rowid = ? AND teamId = ?", {
             1: $user.name,
             2: $user.btcAddress,
-            3: $user.teamId,
-            4: $userId,
-            5: $teamId
+            3: $userId,
+            4: $teamId
         }, function(err) {
             $callback(err);
         });
