@@ -39,11 +39,11 @@ def payAddress():
 @app.route('/payUser')
 def payUser():
     payee = request.args.get('user')
-    amount = request.args.get('amount')
+    amount = int(request.args.get('amount'))
     payer = Config().username
-    description = foo if request.args.get('amount') else 'Reward from ' + payer
+    description = request.args.get('description', 'Reward from ' + payer)
 
-    return sendBittransfer(payee, amount,  description).raise_for_status()
+    return "", sendBittransfer(payee, amount, description).raise_for_status()
 
 #################### Pay to 21.co account
 def sendBittransfer(payee_username, amount, description=""):
@@ -78,12 +78,10 @@ def redeemBittransfer(bittransfer, signature, payee_username):
     """
     verification_url = BitTransfer.verification_url.format(payee_username)
 
-    retValue = requests.post(verification_url,
+    return requests.post(verification_url,
                       data=json.dumps({'bittransfer': bittransfer,
                                        'signature': signature}),
                       headers={'content-type': 'application/json'})
-
-    return retValue
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000,debug=True)
