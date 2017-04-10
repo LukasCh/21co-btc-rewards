@@ -41,7 +41,7 @@ def payUser():
     payee = request.args.get('user')
     amount = request.args.get('amount')
     payer = Config().username
-    description = "No description" if request.args.get('amount') else 'Reward from ' + payer
+    description = request.args.get('description') if request.args.get('description') else 'Reward from ' + payer
 
     return sendBittransfer(payee, amount,  description).raise_for_status()
 
