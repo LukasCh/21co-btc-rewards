@@ -13,6 +13,7 @@ TeamService.init(db);
 const UserService = require("./services/UserService");
 UserService.init(db);
 
+const WAValidator = require('wallet-address-validator');
 /**
  * @swagger
  * /:
@@ -241,9 +242,9 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
  *        name:
  *          type: string
  *          description: User Name
- *        btcAddress:
+ *        paymentAddress:
  *          type: string
- *          description: User BTC Address
+ *          description: User BTC Address/21.co username
  *        teamId:
  *          type: integer
  *          description: Team ID
@@ -253,15 +254,18 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
  *        name:
  *          type: string
  *          description: User Name
- *        btcAddress:
+ *        paymentAddress:
  *          type: string
- *          description: User BTC Address
+ *          description: User BTC Address/21.co username
  *    PaymentDetails:
  *      type: object
  *      properties:
  *        amount:
  *          type: integer
  *          description: Amount to add/subtract
+ *        description:
+ *          type: string
+ *          description: Payment description
  */
 
 /**
@@ -312,7 +316,7 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
 router.route("/teams/:teamId/users").post(function(req, res) {
     UserService.createUser(req.params.teamId, {
         name: req.body.name,
-        btcAddress: req.body.btcAddress
+        paymentAddress: req.body.paymentAddress
     }, function(result) {
         if (result) {
             res.status(201).json(result);
@@ -450,6 +454,7 @@ router.route("/teams/:teamId/users/:userId").get(function(req, res) {
  */
 router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
     var amount = req.body.amount;
+    var description = req.body.description;
     var teamId = req.params.teamId;
     var userId = req.params.userId;
 
@@ -461,10 +466,16 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
                 // update satoshi balance
                 TeamService.changeBalance(teamId, -amount, function(result) {
                     if (!result) {
-                        //retrieve users BTC address to perform the payment on 21.co
+                        //retrieve users BTC address/21.co account to perform the payment on 21.co
                         UserService.getUser(teamId, userId, function(user) {
-                            // TODO: call 21.co server to do the payment
-                            request("http://127.0.0.1:5000/payAddress?address=" + user.btcAddress + "&amount=" + amount, function(error, response, body) {
+                            var url;
+                            if (WAValidator.validate(user.paymentAddress, 'BTC')) {
+                                url = "http://127.0.0.1:5000/payAddress?address=" + user.paymentAddress + "&amount=" + amount + "&description=" + description;
+                            } else {
+                                url = "http://127.0.0.1:5000/payUser?user=" + user.paymentAddress + "&amount=" + amount + "&description=" + description;
+                            }
+                            console.log(url);
+                            request(url, function(error, response, body) {
                                 console.log('error:', error); // Print the error if one occurred
                                 console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
                                 if (response && response.statusCode == 200) {
@@ -481,6 +492,8 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
                         res.status(400).json(team);
                     }
                 })
+            } else {
+                res.status(400).json({message: "Not enough satoshi to send payment."});
             }
         } else {
             res.status(400).result(team);

@@ -3,17 +3,17 @@ var db;
 var UserService = {
     init: function($db) {
         db = $db;
-        db.run("CREATE TABLE IF NOT EXISTS users (name VARCHAR(50), btcAddress VARCHAR(36), teamId INTEGER)");
+        db.run("CREATE TABLE IF NOT EXISTS users (name VARCHAR(50), paymentAddress VARCHAR(36), teamId INTEGER)");
     },
 
     createUser: function($teamId, $user, $callback) {
         db.serialize(function() {
             db.run("INSERT INTO users VALUES(?, ?, ?)", {
                 1: $user.name,
-                2: $user.btcAddress,
+                2: $user.paymentAddress,
                 3: $teamId
             }, function(err) {
-                db.get("SELECT rowid, name, btcAddress, teamId FROM users WHERE rowid = ?", {
+                db.get("SELECT rowid, name, paymentAddress, teamId FROM users WHERE rowid = ?", {
                     1: this.lastID
                 }, function(err, row) {
                     $callback(row);
@@ -23,7 +23,7 @@ var UserService = {
     },
 
     getUsers: function($teamId, $callback) {
-        db.all("SELECT rowid, name, btcAddress, teamId FROM users WHERE teamId = ?", {
+        db.all("SELECT rowid, name, paymentAddress, teamId FROM users WHERE teamId = ?", {
             1: $teamId
         }, function(err, rows) {
             $callback(rows);
@@ -31,7 +31,7 @@ var UserService = {
     },
 
     getUser: function($teamId, $userId, $callback) {
-        db.get("SELECT rowid, name, btcAddress, teamId FROM users WHERE rowid = ? AND teamId = ?", {
+        db.get("SELECT rowid, name, paymentAddress, teamId FROM users WHERE rowid = ? AND teamId = ?", {
             1: $userId,
             2: $teamId
         }, function(err, row) {
@@ -40,9 +40,9 @@ var UserService = {
     },
 
     updateUser: function($teamId, $userId, $user, $callback) {
-        db.run("UPDATE users SET name = ?, btcAddress = ? WHERE rowid = ? AND teamId = ?", {
+        db.run("UPDATE users SET name = ?, paymentAddress = ? WHERE rowid = ? AND teamId = ?", {
             1: $user.name,
-            2: $user.btcAddress,
+            2: $user.paymentAddress,
             3: $userId,
             4: $teamId
         }, function(err) {
