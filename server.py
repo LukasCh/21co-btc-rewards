@@ -1,6 +1,10 @@
 import flask
+import time
+import json
 from two1.wallet import Wallet
 from two1.bitserv.flask import Payment
+from two1.commands.config import Config
+from two1.bitserv.payment_methods import BitTransfer
 import requests
 from flask import request
 
@@ -31,6 +35,55 @@ def payAddress():
     wallet.send_to(address, int(amount))
 
     return "", 200
+
+@app.route('/payUser')
+def payUser():
+    payee = request.args.get('user')
+    amount = request.args.get('amount')
+    payer = Config().username
+    description = foo if request.args.get('amount') else 'Reward from ' + payer
+
+    return sendBittransfer(payee, amount,  description).raise_for_status()
+
+#################### Pay to 21.co account
+def sendBittransfer(payee_username, amount, description=""):
+    """Create and redeem a BitTransfer."""
+    wallet = Wallet()
+    username = Config().username
+    bittransfer, signature = createBittransfer(
+        wallet, username, payee_username, amount, description)
+
+    return redeemBittransfer(bittransfer, signature, payee_username)
+
+def createBittransfer(wallet, payer_username, payee_username, amount, description=""):
+    """Manually create and sign a BitTransfer.
+    wallet is a Wallet instance, payer_username is Config().username.
+    Refer to BitTransferRequests.make_402_payment.
+    """
+
+    bittransfer = json.dumps({
+        'payer': payer_username,
+        'payee_username': payee_username,
+        'amount': amount,
+        'timestamp': time.time(),
+        'description': description
+    })
+    signature = wallet.sign_message(bittransfer)
+
+    return bittransfer, signature
+
+def redeemBittransfer(bittransfer, signature, payee_username):
+    """Apply the result of create_bittransfer to effect the transfer.
+    Refer to BitTransfer.redeem_payment.
+    """
+    verification_url = BitTransfer.verification_url.format(payee_username)
+
+    retValue = requests.post(verification_url,
+                      data=json.dumps({'bittransfer': bittransfer,
+                                       'signature': signature}),
+                      headers={'content-type': 'application/json'})
+
+    return retValue
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000,debug=True)
