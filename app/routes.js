@@ -390,6 +390,10 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
+ *         description: Team ID
+ *         type: integer
+ *       - in: path
+ *         name: userId
  *         description: User ID or 21.co account
  *         type: string
  *     responses:
