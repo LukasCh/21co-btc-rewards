@@ -59,7 +59,7 @@ var UserService = {
             ? " paymentAddress "
             : " rowid ") + " = ? AND teamId = ?", {
             1: $userId,
-            2: teamId
+            2: $teamId
         }, function(err) {
             $callback(err);
         });
