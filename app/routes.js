@@ -351,8 +351,8 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *         type: integer
  *       - in: path
  *         name: userId
- *         description: User ID
- *         type: integer
+ *         description: User ID or 21.co account
+ *         type: string
  *     responses:
  *       200:
  *         description: User with the ID provided
@@ -372,8 +372,8 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *         type: integer
  *       - in: path
  *         name: userId
- *         description: User ID
- *         type: integer
+ *         description: User ID or 21.co account
+ *         type: string
  *       - in: body
  *         name: body
  *         description: User with updated values
@@ -390,8 +390,8 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: User ID
- *         type: integer
+ *         description: User ID or 21.co account
+ *         type: string
  *     responses:
  *       204:
  *         description: no content
@@ -438,7 +438,7 @@ router.route("/teams/:teamId/users/:userId").get(function(req, res) {
  *       - in: path
  *         name: userId
  *         description: User ID
- *         type: integer
+ *         type: string
  *       - in: body
  *         name: body
  *         description: Satoshi amount to pay to the user
