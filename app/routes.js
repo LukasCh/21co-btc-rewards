@@ -130,8 +130,8 @@ router.route("/teams").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *     responses:
  *       200:
  *         description: Team with the ID provided
@@ -147,8 +147,8 @@ router.route("/teams").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: body
  *         name: body
  *         description: Team with updated values
@@ -165,8 +165,8 @@ router.route("/teams").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *     responses:
  *       204:
  *         description: no content
@@ -208,8 +208,8 @@ router.route("/teams/:teamId").get(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: body
  *         name: body
  *         description: Satoshi amount to add/subtract
@@ -281,8 +281,8 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: body
  *         name: body
  *         description: User that will be crated
@@ -303,8 +303,8 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *     responses:
  *       200:
  *         description: Arrays of Users
@@ -347,8 +347,8 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: path
  *         name: userId
  *         description: User ID or 21.co account
@@ -368,8 +368,8 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: path
  *         name: userId
  *         description: User ID or 21.co account
@@ -390,8 +390,8 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: path
  *         name: userId
  *         description: User ID or 21.co account
@@ -437,8 +437,8 @@ router.route("/teams/:teamId/users/:userId").get(function(req, res) {
  *     parameters:
  *       - in: path
  *         name: teamId
- *         description: Team ID
- *         type: integer
+ *         description: Team ID or Name
+ *         type: string
  *       - in: path
  *         name: userId
  *         description: User ID

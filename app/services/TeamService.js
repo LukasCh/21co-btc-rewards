@@ -28,7 +28,9 @@ var TeamService = {
     },
 
     getTeam: function($teamId, $callback) {
-        db.get("SELECT rowid, name, satoshiBalance FROM teams WHERE rowid = ?", {
+        db.get("SELECT rowid, name, satoshiBalance FROM teams WHERE " + (isNaN($teamId)
+            ? "name"
+            : "rowid") + " = ?", {
             1: $teamId
         }, function(err, row) {
             $callback(row);
@@ -36,7 +38,9 @@ var TeamService = {
     },
 
     updateTeam: function($teamId, $team, $callback) {
-        db.run("UPDATE teams SET name = ? WHERE rowid = ?", {
+        db.run("UPDATE teams SET name = ? WHERE " + (isNaN($teamId)
+            ? "name"
+            : "rowid") + " = ?", {
             1: $team.name,
             2: $teamId
         }, function(err) {
@@ -45,7 +49,9 @@ var TeamService = {
     },
 
     deleteTeam: function($teamId, $callback) {
-        db.run("DELETE FROM teams WHERE rowid = ?", {
+        db.run("DELETE FROM teams WHERE " + (isNaN($teamId)
+            ? "name"
+            : "rowid") + " = ?", {
             1: $teamId
         }, function(err) {
             $callback(err);
@@ -53,7 +59,9 @@ var TeamService = {
     },
 
     changeBalance: function($teamId, $amount, $callback) {
-        db.run("UPDATE teams SET satoshiBalance = satoshiBalance + ? WHERE rowid = ?", {
+        db.run("UPDATE teams SET satoshiBalance = satoshiBalance + ? WHERE " + (isNaN($teamId)
+            ? "name"
+            : "rowid") + " = ?", {
             1: $amount,
             2: $teamId
         }, function(err) {
