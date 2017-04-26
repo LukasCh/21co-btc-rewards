@@ -505,4 +505,11 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
     });
 });
 
+
+router.route("/webhook").post(function(req, res) {
+  console.log("yay, its a webhook!!");
+  res.status(200).json({message: "Yay, webhook!"}).end();
+});
+
+
 module.exports = router;
