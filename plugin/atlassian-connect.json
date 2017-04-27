@@ -2,7 +2,7 @@
     "name": "Bitcoin rewards!",
     "description": "Atlassian Connect add-on to pay in bitcoins for issues",
     "key": "org.hotovo.bitcoin-reward",
-    "baseUrl": "https://e1826998.ngrok.io",
+    "baseUrl": "https://3e6e2145.ngrok.io",
     "vendor": {
         "name": "Hotovo",
         "url": "Hotovo.org"
@@ -26,10 +26,10 @@
             },
             {
                 "key": "teamnamedialog",
-                "url": "teamDialog.html",
+                "url": "teamDialog.html?userKey={user.key}",
                 "options": {
                     "header": {
-                        "value": "Set your team id"
+                        "value": "Set your 21.co user id"
                     },
                     "chrome": true,
                     "width": "60%",
@@ -59,7 +59,7 @@
             "key": "attached-bitcoins-panel"
         }],
         "webItems": [{
-            "location": "system.admin.header.pageactions",
+            "location": "system.user.profile.links/operations",
             "weight": 200,
             "context": "addon",
             "target": {
@@ -78,7 +78,8 @@
         }],
         "webhooks": [{
             "event": "jira:issue_updated",
-            "url": "/webhook"
+            "url": "/api/webhook",
+            "propertyKeys": ["bitcoin-reward"]
         }]
     },
     "scopes": [

@@ -12,6 +12,7 @@ jQuery(function($) {
                 AJS.$('#reward-text').text("task reward: " + response.value + " satoshi");
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                AJS.$('#reward-text').text("task reward: not set");
                 console.log('cant get property' + errorThrown);
             }
         });

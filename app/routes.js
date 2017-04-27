@@ -28,7 +28,9 @@ const WAValidator = require('wallet-address-validator');
  *         description: status
  */
 router.get("/", function(req, res) {
-    res.status(200).json({message: "BTC Bounty server is alive!"});
+    res.status(200).json({
+        message: "BTC Bounty server is alive!"
+    });
 });
 
 // Team API routes
@@ -497,7 +499,9 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
                     }
                 })
             } else {
-                res.status(400).json({message: "Not enough satoshi to send payment."});
+                res.status(400).json({
+                    message: "Not enough satoshi to send payment."
+                });
             }
         } else {
             res.status(400).result(team);
@@ -507,8 +511,42 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
 
 
 router.route("/webhook").post(function(req, res) {
-  console.log("yay, its a webhook!!");
-  res.status(200).json({message: "Yay, webhook!"}).end();
+    console.dir(req.body);
+    var userKey = req.body.user.key;
+    var reward = req.body.properties[0].value;
+    //console.log("props are " + properties['bitcoin-reward']);
+    //console.dir(properties);
+    for (var key in req.body.changelog.items) {
+        if (req.body.changelog.items.hasOwnProperty(key)) {
+            item = req.body.changelog.items[key];
+            //console.log(item);
+            if ((item.field === "resolution") && (item.toString !== null)) {
+
+                var options = {
+                    url: 'https://3e6e2145.ngrok.io/api/teams/hotovo/users/' + userKey + '/pay',
+                    method: 'POST',
+                    form: {
+                        'amount': reward,
+                        'description': 'payment for JIRA issue ' + req.body.issue.key
+                    }
+                }
+
+                request(options, function(error, response, body) {
+                    console.log(body);
+                    if (!error && response.statusCode == 200) {
+                        // Print out the response body
+                        console.log(body)
+                    }
+                })
+
+
+                console.log("I found close event!");
+            }
+        }
+    }
+    res.status(200).json({
+        message: "Yay, webhook!"
+    }).end();
 });
 
 
