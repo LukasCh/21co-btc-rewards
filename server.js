@@ -1,7 +1,7 @@
 const http = require("http");
 const url = require("url");
-const port = 3000;
 const express = require("express");
+const greenlockExpress = require('greenlock-express');
 const app = express();
 const bodyParser = require("body-parser");
 const swaggerUi = require('swagger-ui-express');
@@ -31,7 +31,4 @@ var swaggerSpec = swaggerJSDoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Start the server
-app.listen(port, () => {
-    console.log("nodejs server is running in port " + port);
-});
+greenlockExpress.create({server: 'staging', email: 'mail@lukaschmelar.sk', agreeTos: true, approveDomains: ['vps379184.ovh.net'], app: app}).listen(80, 443);

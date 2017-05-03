@@ -1,21 +1,22 @@
 {
-  "name": "21co-rewards-server",
-  "version": "1.0.0",
-  "description": "21.co BTC rewards for users",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
-  },
-  "author": "Me",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
-    "request": "^2.81.0",
-    "sqlite3": "^3.1.8",
-    "swagger-jsdoc": "^1.9.2",
-    "swagger-ui-express": "^1.0.7",
-    "wallet-address-validator": "^0.1.0"
-  }
+    "name": "21co-rewards-server",
+    "version": "1.0.0",
+    "description": "21.co BTC rewards for users",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node server.js"
+    },
+    "author": "Me",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.17.1",
+        "express": "^4.15.2",
+        "request": "^2.81.0",
+        "sqlite3": "^3.1.8",
+        "swagger-jsdoc": "^1.9.2",
+        "swagger-ui-express": "^1.0.7",
+        "wallet-address-validator": "^0.1.0",
+        "greenlock-express": "^2.0.10"
+    }
 }
