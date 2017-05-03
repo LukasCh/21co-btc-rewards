@@ -31,4 +31,31 @@ var swaggerSpec = swaggerJSDoc(options);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-greenlockExpress.create({server: 'staging', email: 'mail@lukaschmelar.sk', agreeTos: true, approveDomains: ['vps379184.ovh.net'], app: app}).listen(80, 443);
+function approveDomains(opts, certs, cb) {
+    if (certs) {
+        opts.domains = certs.altnames;
+    } else {
+        opts.email = 'mail@lukaschmelar.sk';
+        opts.agreeTos = true;
+    }
+
+    // NOTE: you can also change other options such as `challengeType` and `challenge`
+    // opts.challengeType = 'http-01';
+    // opts.challenge = require('le-challenge-fs').create({});
+
+    cb(null, {
+        options: opts,
+        certs: certs
+    });
+}
+
+greenlockExpress.create({
+    server: 'staging',
+    challenges: {
+        'http-01': require('le-challenge-fs').create({webrootPath: '/tmp/acme-challenges'})
+    },
+    store: require('le-store-certbot').create({webrootPath: '/tmp/acme-challenges'}),
+    domains: ["vps379184.ovh.net"],
+    approveDomains: approveDomains,
+    app: app
+}).listen(80, 443);
