@@ -1,4 +1,5 @@
 const http = require("http");
+const https = require("https");
 const url = require("url");
 const express = require("express");
 const greenlockExpress = require('greenlock-express');
@@ -49,7 +50,7 @@ function approveDomains(opts, certs, cb) {
     });
 }
 
-greenlockExpress.create({
+var lex = greenlockExpress.create({
     server: 'staging',
     challenges: {
         'http-01': require('le-challenge-fs').create({webrootPath: '/tmp/acme-challenges'})
@@ -58,4 +59,12 @@ greenlockExpress.create({
     domains: ["vps379184.ovh.net"],
     approveDomains: approveDomains,
     app: app
-}).listen(80, 443);
+});
+
+http.createServer(lex.middleware(require('redirect-https')())).listen(80, function() {
+    console.log("Listening for ACME http-01 challenges on", this.address());
+});
+
+https.createServer(lex.httpsOptions, lex.middleware(app)).listen(443, function() {
+    console.log("Listening for ACME tls-sni-01 challenges and serve app on", this.address());
+});
