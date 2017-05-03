@@ -1,0 +1,89 @@
+{
+    "name": "Bitcoin rewards!",
+    "description": "Atlassian Connect add-on to pay in bitcoins for issues",
+    "key": "org.hotovo.bitcoin-reward",
+    "baseUrl": "https://3e6e2145.ngrok.io",
+    "vendor": {
+        "name": "Hotovo",
+        "url": "Hotovo.org"
+    },
+    "authentication": {
+        "type": "none"
+    },
+    "apiVersion": 1,
+    "modules": {
+        "dialogs": [{
+                "key": "pricedialog",
+                "url": "dialog.html",
+                "options": {
+                    "header": {
+                        "value": "Set reward amount"
+                    },
+                    "chrome": true,
+                    "width": "60%",
+                    "height": "30%"
+                }
+            },
+            {
+                "key": "teamnamedialog",
+                "url": "teamDialog.html?userKey={user.key}",
+                "options": {
+                    "header": {
+                        "value": "Set your 21.co user id"
+                    },
+                    "chrome": true,
+                    "width": "60%",
+                    "height": "30%"
+                }
+            }
+        ],
+        "generalPages": [{
+            "url": "/helloworld.html",
+            "key": "hello-world",
+            "location": "system.top.navigation.bar",
+            "name": {
+                "value": "Greeting"
+            }
+        }],
+        "webPanels": [{
+            "url": "/helloworld.html?issueKey={issue.key}",
+            "location": "atl.jira.view.issue.left.context",
+            "layout": {
+                "width": "100%",
+                "height": "100%"
+            },
+            "weight": 150,
+            "name": {
+                "value": "Attached Bitcoins"
+            },
+            "key": "attached-bitcoins-panel"
+        }],
+        "webItems": [{
+            "location": "system.user.profile.links/operations",
+            "weight": 200,
+            "context": "addon",
+            "target": {
+                "type": "dialogmodule",
+                "options": {
+                    "key": "teamnamedialog"
+                }
+            },
+            "tooltip": {
+                "value": "Set up team name"
+            },
+            "name": {
+                "value": "Bitcoin Reward settings"
+            },
+            "key": "team-id-webitem"
+        }],
+        "webhooks": [{
+            "event": "jira:issue_updated",
+            "url": "/api/webhook",
+            "propertyKeys": ["bitcoin-reward"]
+        }]
+    },
+    "scopes": [
+        "read",
+        "write"
+    ]
+}

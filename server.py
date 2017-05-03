@@ -8,13 +8,14 @@ from two1.bitserv.payment_methods import BitTransfer
 import requests
 from flask import request
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_url_path='/plugin')
 wallet = Wallet()
 payment = Payment(app, wallet)
 
 # Use this to add 5000 to your Team Satoshi balance
 # TODO: Make it work :)
 @payment.required(5000)
+
 @app.route('/addFunds')
 def addFunds():
     teamId = request.args.get('teamId')

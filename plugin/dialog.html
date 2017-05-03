@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--<link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.9.17/css/aui.min.css" media="all">-->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//aui-cdn.atlassian.com/aui-adg/5.9.17/js/aui.min.js"></script>
+    <link rel="stylesheet" href="//aui-cdn.atlassian.com/aui-adg/5.9.17/css/aui.min.css" media="all">
+    <!-- AUI Experimental components -->
+    <script src="//aui-cdn.atlassian.com/aui-adg/5.9.17/js/aui-experimental.min.js"></script>
+
+    <!-- AUI Datepicker and Soy templates -->
+    <script src="//aui-cdn.atlassian.com/aui-adg/5.9.17/js/aui-datepicker.min.js"></script>
+
+    <script id="connect-loader" data-options="sizeToParent:true;">
+        (function() {
+            var getUrlParam = function(param) {
+                var codedParam = (new RegExp(param + '=([^&]*)')).exec(window.location.search)[1];
+                return decodeURIComponent(codedParam);
+            };
+            var baseUrl = getUrlParam('xdm_e') + getUrlParam('cp');
+            jQuery.getScript(baseUrl + '/atlassian-connect/all.js', function() {
+                jQuery.getScript('js/dialog.js');
+            });
+        })();
+    </script>
+
+</head>
+
+<body>
+    <div>
+        Satoshi for the task: <input id="input" type="text" name="satoshi">
+    </div>
+
+
+
+</body>
+
+</html>

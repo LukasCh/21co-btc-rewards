@@ -7,6 +7,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const swaggerUi = require('swagger-ui-express');
 
+app.use(express.static('plugin'))
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
