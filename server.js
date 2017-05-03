@@ -40,23 +40,30 @@ function approveDomains(opts, certs, cb) {
         opts.agreeTos = true;
     }
 
-    // NOTE: you can also change other options such as `challengeType` and `challenge`
-    // opts.challengeType = 'http-01';
-    // opts.challenge = require('le-challenge-fs').create({});
-
     cb(null, {
         options: opts,
         certs: certs
     });
 }
 
+var leStore = require('le-store-certbot').create({
+    configDir: '~/letsencrypt/etc', // or /etc/letsencrypt or wherever
+    privkeyPath: ':configDir/live/:hostname/privkey.pem', //
+    fullchainPath: ':configDir/live/:hostname/fullchain.pem', // Note: both that :configDir and :hostname
+    certPath: ':configDir/live/:hostname/cert.pem', //       will be templated as expected by
+    chainPath: ':configDir/live/:hostname/chain.pem', //       node-letsencrypt
+    workDir: '~/letsencrypt/var/lib',
+    logsDir: '~/letsencrypt/var/log',
+    webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
+    debug: true
+});
+
 var lex = greenlockExpress.create({
-    server: 'staging',
+    server: 'https://acme-v01.api.letsencrypt.org/directory',
     challenges: {
-        'http-01': require('le-challenge-fs').create({webrootPath: '/tmp/acme-challenges'})
+        'http-01': require('le-challenge-fs').create({webrootPath: '~/letsencrypt/var/acme-challenges'})
     },
-    store: require('le-store-certbot').create({webrootPath: '/tmp/acme-challenges'}),
-    domains: ["vps379184.ovh.net"],
+    store: leStore,
     approveDomains: approveDomains,
     app: app
 });
