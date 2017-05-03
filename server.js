@@ -55,7 +55,7 @@ var leStore = require('le-store-certbot').create({
     workDir: '~/letsencrypt/var/lib',
     logsDir: '~/letsencrypt/var/log',
     webrootPath: '~/letsencrypt/srv/www/:hostname/.well-known/acme-challenge',
-    debug: true
+    debug: false
 });
 
 var lex = greenlockExpress.create({
