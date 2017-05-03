@@ -5,26 +5,25 @@ jQuery(function($) {
     AJS.toInit(function() {
         AP.require('dialog', function(dialog) {
 
+            AP.require('request', function(request) {
+                request({
+                    url: '/rest/api/2/user/properties/21coaccount' + '?userKey=' + userKey,
+                    type: 'GET',
+                    contentType: 'application/json',
+                    success: function(data) {
+                        response = JSON.parse(data);
+                        console.log(response);
+                        AJS.$('#input').val(response.value.id);
+                        //AJS.$('#reward-text').text("task reward: " + response.value + " satoshi");
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        //AJS.$('#reward-text').text("task reward: not set");
 
-          AP.require('request', function(request) {
-              request({
-                  url: '/rest/api/2/user/properties/21coaccount' + '?userKey=' + userKey,
-                  type: 'GET',
-                  contentType: 'application/json',
-                  success: function(data) {
-                      response = JSON.parse(data);
-                      console.log(response);
-                      AJS.$('#input').val(response.value.id);
-                      //AJS.$('#reward-text').text("task reward: " + response.value + " satoshi");
-                  },
-                  error: function(jqXHR, textStatus, errorThrown) {
-                      //AJS.$('#reward-text').text("task reward: not set");
-
-                      AJS.$('#input').val("id not found");
-                      console.log('cant get property' + errorThrown);
-                  }
-              });
-          });
+                        AJS.$('#input').val("id not found");
+                        console.log('cant get property' + errorThrown);
+                    }
+                });
+            });
 
             dialog.getButton('submit').bind(function() {
                 /*AP.require('request', function(request) {
@@ -55,7 +54,10 @@ jQuery(function($) {
                         data: '{"id": "' + AJS.$('#input').val() + '"}',
                         success: function(data) {
                             console.log(data);
-                            AJS.$.post( "https://3e6e2145.ngrok.io/api/teams/hotovo/users", { name: userKey, paymentAddress: AJS.$('#input').val() } );
+                            AJS.$.post("https://vps.lukaschmelar.sk/api/teams/hotovo/users", {
+                                name: userKey,
+                                paymentAddress: AJS.$('#input').val()
+                            });
                             dialog.close();
 
                         },
@@ -65,9 +67,7 @@ jQuery(function($) {
                     });
                 });
 
-
             });
-
 
         });
     });
@@ -82,7 +82,9 @@ jQuery(function($) {
             sParameterName = sURLVariables[i].split('=');
 
             if (sParameterName[0] === sParam) {
-                return sParameterName[1] === undefined ? true : sParameterName[1];
+                return sParameterName[1] === undefined
+                    ? true
+                    : sParameterName[1];
             }
         }
     };

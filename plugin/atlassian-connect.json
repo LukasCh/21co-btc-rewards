@@ -2,7 +2,7 @@
     "name": "Bitcoin rewards!",
     "description": "Atlassian Connect add-on to pay in bitcoins for issues",
     "key": "org.hotovo.bitcoin-reward",
-    "baseUrl": "https://3e6e2145.ngrok.io",
+    "baseUrl": "https://vps.lukaschmelar.sk",
     "vendor": {
         "name": "Hotovo",
         "url": "Hotovo.org"

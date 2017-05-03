@@ -28,9 +28,7 @@ const WAValidator = require('wallet-address-validator');
  *         description: status
  */
 router.get("/", function(req, res) {
-    res.status(200).json({
-        message: "BTC Bounty server is alive!"
-    });
+    res.status(200).json({message: "BTC Bounty server is alive!"});
 });
 
 // Team API routes
@@ -499,16 +497,13 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
                     }
                 })
             } else {
-                res.status(400).json({
-                    message: "Not enough satoshi to send payment."
-                });
+                res.status(400).json({message: "Not enough satoshi to send payment."});
             }
         } else {
             res.status(400).result(team);
         }
     });
 });
-
 
 router.route("/webhook").post(function(req, res) {
     console.dir(req.body);
@@ -523,7 +518,7 @@ router.route("/webhook").post(function(req, res) {
             if ((item.field === "resolution") && (item.toString !== null)) {
 
                 var options = {
-                    url: 'https://3e6e2145.ngrok.io/api/teams/hotovo/users/' + userKey + '/pay',
+                    url: 'https://vps.lukaschmelar.sk/api/teams/hotovo/users/' + userKey + '/pay',
                     method: 'POST',
                     form: {
                         'amount': reward,
@@ -539,15 +534,11 @@ router.route("/webhook").post(function(req, res) {
                     }
                 })
 
-
                 console.log("I found close event!");
             }
         }
     }
-    res.status(200).json({
-        message: "Yay, webhook!"
-    }).end();
+    res.status(200).json({message: "Yay, webhook!"}).end();
 });
-
 
 module.exports = router;
