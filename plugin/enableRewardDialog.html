@@ -21,7 +21,7 @@
             };
             var baseUrl = getUrlParam('xdm_e') + getUrlParam('cp');
             jQuery.getScript(baseUrl + '/atlassian-connect/all.js', function() {
-                jQuery.getScript('js/teamDialog.js');
+                jQuery.getScript('js/enableRewardDialog.js');
             });
         })();
     </script>
@@ -30,9 +30,11 @@
 
 <body>
     <div>
-        21.co user id: <input id="input" type="text" name="team id">
-    </div>
-
+    <button id="enable-reward" class="aui-button">Enable Bitcoin reward</button>
+  </div>
+  <div>
+  <button id="disable-reward" class="aui-button">Disable Bitcoin reward</button>
+</div>
 
 
 </body>
