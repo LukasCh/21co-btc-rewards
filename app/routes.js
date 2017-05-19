@@ -28,7 +28,7 @@ const WAValidator = require('wallet-address-validator');
  *         description: status
  */
 router.get("/", function(req, res) {
-    res.status(200).json({message: "BTC Bounty server is alive!"});
+    res.status(200).json({message: "BTC Bounty server is alive!"}).end();
 });
 
 // Team API routes
@@ -102,7 +102,7 @@ router.route("/teams").post(function(req, res) {
         name: req.body.name
     }, function(result) {
         if (result) {
-            res.status(201).json(result);
+            res.status(201).json(result).end();
         } else {
             res.status(400).end();
         }
@@ -110,7 +110,7 @@ router.route("/teams").post(function(req, res) {
 }).get(function(req, res) {
     TeamService.getTeams(function(result) {
         if (result) {
-            res.status(200).json(result);
+            res.status(200).json(result).end();
         } else {
             res.status(404).end();
         }
@@ -174,7 +174,7 @@ router.route("/teams").post(function(req, res) {
 router.route("/teams/:teamId").get(function(req, res) {
     TeamService.getTeam(req.params.teamId, function(result) {
         if (result) {
-            res.status(200).json(result);
+            res.status(200).json(result).end();
         } else {
             res.status(404).end();
         }
@@ -184,7 +184,7 @@ router.route("/teams/:teamId").get(function(req, res) {
         if (!result) {
             res.status(204).end();
         } else {
-            res.status(400).json(result);
+            res.status(400).json(result).end();
         }
     });
 }).delete(function(req, res) {
@@ -192,7 +192,7 @@ router.route("/teams/:teamId").get(function(req, res) {
         if (!result) {
             res.status(204).end();
         } else {
-            res.status(400).json(result);
+            res.status(400).json(result).end();
         }
     });
 });
@@ -224,7 +224,7 @@ router.route("/teams/:teamId/balance").put(function(req, res) {
         if (!result) {
             res.status(204).end();
         } else {
-            res.status(400).json(result);
+            res.status(400).json(result).end();
         }
     });
 });
@@ -319,7 +319,7 @@ router.route("/teams/:teamId/users").post(function(req, res) {
         paymentAddress: req.body.paymentAddress
     }, function(result) {
         if (result) {
-            res.status(201).json(result);
+            res.status(201).json(result).end();
         } else {
             res.status(400).end();
         }
@@ -327,7 +327,7 @@ router.route("/teams/:teamId/users").post(function(req, res) {
 }).get(function(req, res) {
     UserService.getUsers(req.params.teamId, function(result) {
         if (result) {
-            res.status(200).json(result);
+            res.status(200).json(result).end();
         } else {
             res.status(404).end();
         }
@@ -413,7 +413,7 @@ router.route("/teams/:teamId/users/:userId").get(function(req, res) {
         if (!result) {
             res.status(204).end();
         } else {
-            res.status(400).json(result);
+            res.status(400).json(result).end();
         }
     });
 }).delete(function(req, res) {
@@ -421,7 +421,7 @@ router.route("/teams/:teamId/users/:userId").get(function(req, res) {
         if (!result) {
             res.status(204).end();
         } else {
-            res.status(400).json(result);
+            res.status(400).json(result).end();
         }
     });
 });
@@ -464,43 +464,56 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
 
     TeamService.getTeam(teamId, function(team) {
         // if the team exists
+        console.log("tid" + teamId);
         if (team) {
+            console.log("found team");
             // and has enough satoshi to pay the user
             if (team.satoshiBalance - amount >= 0) {
                 // update satoshi balance
+                console.log("enough balance")
                 TeamService.changeBalance(teamId, -amount, function(result) {
                     if (!result) {
+                        console.log("balance change successful");
                         //retrieve users BTC address/21.co account to perform the payment on 21.co
                         UserService.getUser(teamId, userId, function(user) {
+                            console.log("User found? " + userId);
                             var url;
-                            if (WAValidator.validate(user.paymentAddress, 'BTC')) {
-                                url = "http://127.0.0.1:5000/payAddress?address=" + user.paymentAddress + "&amount=" + amount + "&description=" + description;
-                            } else {
-                                url = "http://127.0.0.1:5000/payUser?user=" + user.paymentAddress + "&amount=" + amount + "&description=" + description;
-                            }
-                            console.log(url);
-                            request(url, function(error, response, body) {
-                                console.log('error:', error); // Print the error if one occurred
-                                console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                                if (response && response.statusCode == 200) {
-                                    res.status(204).end();
+                            if (typeof user !== "undefined" && user && typeof user.paymentAddress !== "undefined") {
+                                if (WAValidator.validate(user.paymentAddress, 'BTC')) {
+                                    url = "http://127.0.0.1:5000/payAddress?address=" + user.paymentAddress + "&amount=" + amount + "&description=" + description;
                                 } else {
-                                    // rollback the balance change
-                                    TeamService.changeBalance(teamId, amount, function(result) {
-                                        res.status(500).end();
-                                    });
+                                    url = "http://127.0.0.1:5000/payUser?user=" + user.paymentAddress + "&amount=" + amount + "&description=" + description;
                                 }
-                            });
+                                console.log(url);
+                                request(url, function(error, response, body) {
+                                    console.log('error:', error); // Print the error if one occurred
+                                    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+                                    if (response && response.statusCode == 200) {
+                                        res.status(204).end();
+                                    } else {
+                                        // rollback the balance change
+                                        TeamService.changeBalance(teamId, amount, function(result) {
+                                            res.status(500).json({message: "Error performing payment."}).end();
+                                        });
+                                    }
+                                });
+                            } else {
+                                // rollback the balance change
+                                console.log("Unknown user " + user);
+                                TeamService.changeBalance(teamId, amount, function(result) {
+                                    res.status(400).json({message: "Invalid user or a user without paymentAddress."}).end();
+                                });
+                            }
                         })
                     } else {
-                        res.status(400).json(team);
+                        res.status(400).json(team).end();
                     }
                 })
             } else {
-                res.status(400).json({message: "Not enough satoshi to send payment."});
+                res.status(400).json({message: "Not enough satoshi to send payment."}).end();
             }
         } else {
-            res.status(400).json(team);
+            res.status(400).json(team).end();
         }
     });
 });
