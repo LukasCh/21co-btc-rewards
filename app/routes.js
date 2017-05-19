@@ -500,13 +500,13 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
                 res.status(400).json({message: "Not enough satoshi to send payment."});
             }
         } else {
-            res.status(400).result(team);
+            res.status(400).json(team);
         }
     });
 });
 
 router.route("/webhook").post(function(req, res) {
-    console.dir(req.body);
+    //console.dir(req.body);
     var userKey = req.body.user.key;
     var reward = req.body.properties[0].value;
     //console.log("props are " + properties['bitcoin-reward']);
@@ -527,10 +527,12 @@ router.route("/webhook").post(function(req, res) {
                 }
 
                 request(options, function(error, response, body) {
-                    console.log(body);
+                    //console.log(body);
                     if (!error && response.statusCode == 200) {
                         // Print out the response body
-                        console.log(body)
+                        console.log(body);
+                    } else {
+                        console.log(error);
                     }
                 })
 
