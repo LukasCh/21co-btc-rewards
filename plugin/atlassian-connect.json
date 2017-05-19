@@ -87,7 +87,8 @@
         "webhooks": [{
             "event": "jira:issue_updated",
             "url": "/api/webhook",
-            "propertyKeys": ["bitcoin-reward"]
+            "propertyKeys": ["bitcoin-reward"],
+            "filter": "project IN (CS, CDS)"
         }]
     },
     "scopes": [
