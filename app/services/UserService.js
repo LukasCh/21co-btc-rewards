@@ -44,7 +44,7 @@ var UserService = {
 
     getUser: function($teamId, $userId, $callback) {
         db.get("SELECT rowid, name, paymentAddress, teamId FROM users WHERE " + (isNaN($userId)
-            ? "paymentAddress"
+            ? "name"
             : "rowid") + " = ? AND teamId IN (" + (isNaN($teamId)
             ? "(SELECT rowid FROM teams WHERE name = ?)"
             : "?") + ")", {
@@ -57,7 +57,7 @@ var UserService = {
 
     updateUser: function($teamId, $userId, $user, $callback) {
         db.run("UPDATE users SET name = ?, paymentAddress = ? WHERE " + (isNaN($userId)
-            ? "paymentAddress"
+            ? "name"
             : "rowid") + " = ? AND teamId IN (" + (isNaN($teamId)
             ? "(SELECT rowid FROM teams WHERE name = ?)"
             : "?") + ")", {
@@ -72,7 +72,7 @@ var UserService = {
 
     deleteUser: function($teamId, $userId, $callback) {
         db.run("DELETE FROM users WHERE " + (isNaN($userId)
-            ? "paymentAddress"
+            ? "name"
             : "rowid") + " = ? AND teamId IN (" + (isNaN($teamId)
             ? "(SELECT rowid FROM teams WHERE name = ?)"
             : "?") + ")", {

@@ -351,7 +351,7 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *         type: string
  *       - in: path
  *         name: userId
- *         description: User ID or 21.co account
+ *         description: User ID or Name
  *         type: string
  *     responses:
  *       200:
@@ -372,7 +372,7 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *         type: string
  *       - in: path
  *         name: userId
- *         description: User ID or 21.co account
+ *         description: User ID or Name
  *         type: string
  *       - in: body
  *         name: body
@@ -394,7 +394,7 @@ router.route("/teams/:teamId/users").post(function(req, res) {
  *         type: string
  *       - in: path
  *         name: userId
- *         description: User ID or 21.co account
+ *         description: User ID or Name
  *         type: string
  *     responses:
  *       204:
@@ -464,19 +464,14 @@ router.route("/teams/:teamId/users/:userId/pay").post(function(req, res) {
 
     TeamService.getTeam(teamId, function(team) {
         // if the team exists
-        console.log("tid" + teamId);
         if (team) {
-            console.log("found team");
             // and has enough satoshi to pay the user
             if (team.satoshiBalance - amount >= 0) {
                 // update satoshi balance
-                console.log("enough balance")
                 TeamService.changeBalance(teamId, -amount, function(result) {
                     if (!result) {
-                        console.log("balance change successful");
                         //retrieve users BTC address/21.co account to perform the payment on 21.co
                         UserService.getUser(teamId, userId, function(user) {
-                            console.log("User found? " + userId);
                             var url;
                             if (typeof user !== "undefined" && user && typeof user.paymentAddress !== "undefined") {
                                 if (WAValidator.validate(user.paymentAddress, 'BTC')) {
